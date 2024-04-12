@@ -1,12 +1,34 @@
 package com.healthycoderapp;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
 
 public class BMICalculatorTest {
   @Test
-  void test() {
-    assertTrue(BMICalculator.isDietRecommended(89, 1.72));
+  void should_ReturnTrue_When_DietRecommended() {
+    // Given
+    double weight = 89;
+    double height = 1.72;
+
+    // When
+    boolean isRecommended = BMICalculator.isDietRecommended(weight, height);
+
+    // Then
+    assertTrue(isRecommended);
+  }
+
+  @Test
+  void should_ReturnFalse_When_DietNotRecommended() {
+    // Given
+    double weight = 50;
+    double height = 1.92;
+
+    // When
+    boolean isRecommended = BMICalculator.isDietRecommended(weight, height);
+
+    // Then
+    assertFalse(isRecommended);
   }
 }
