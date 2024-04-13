@@ -15,6 +15,8 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 public class BMICalculatorTest {
   @BeforeAll
@@ -27,10 +29,11 @@ public class BMICalculatorTest {
     System.out.println("After all the unit tests.");
   }
 
-  @Test
-  void should_ReturnTrue_When_DietRecommended() {
+  @ParameterizedTest
+  @ValueSource(doubles = { 89, 95, 110 })
+  void should_ReturnTrue_When_DietRecommended(double coderWeight) {
     // Given
-    double weight = 89;
+    double weight = coderWeight;
     double height = 1.72;
 
     // When
