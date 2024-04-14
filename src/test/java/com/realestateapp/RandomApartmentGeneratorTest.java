@@ -4,76 +4,80 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.math.BigDecimal;
-import java.util.Random;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.RepeatedTest;
 
-public class RandomApartmentGeneratorTest {
+class RandomApartmentGeneratorTest {
+
   private static final double MAX_MULTIPLIER = 4.0;
 
   @Nested
-  class DefaultMinAreaMinPrice {
-    RandomApartmentGenerator randomApartmentGenerator;
+  class GeneratorDefaultParamsTests {
+
+    private RandomApartmentGenerator generator;
 
     @BeforeEach
     void setup() {
-      randomApartmentGenerator = new RandomApartmentGenerator();
+      this.generator = new RandomApartmentGenerator();
     }
 
-    @Test
+    @RepeatedTest(10)
     void should_GenerateCorrectApartment_When_DefaultMinAreaMinPrice() {
-      // Given
-      double minArea = 30;
+
+      // given
+      double minArea = 30.0;
       double maxArea = minArea * MAX_MULTIPLIER;
-      BigDecimal minPricePerSquareMeter = new BigDecimal(3000);
+      BigDecimal minPricePerSquareMeter = new BigDecimal(3000.0);
       BigDecimal maxPricePerSquareMeter = minPricePerSquareMeter.multiply(new BigDecimal(MAX_MULTIPLIER));
 
-      // When
-      Apartment apartment = randomApartmentGenerator.generate();
+      // when
+      Apartment apartment = generator.generate();
 
-      // Then
+      // then
+      BigDecimal maxApartmentPrice = new BigDecimal(apartment.getArea()).multiply(maxPricePerSquareMeter);
+      BigDecimal minApartmentPrice = new BigDecimal(apartment.getArea()).multiply(minPricePerSquareMeter);
       assertAll(
           () -> assertTrue(apartment.getArea() >= minArea),
           () -> assertTrue(apartment.getArea() <= maxArea),
-          () -> assertTrue(apartment.getPrice()
-              .compareTo(minPricePerSquareMeter.multiply(new BigDecimal(apartment.getArea()))) >= 0),
-          () -> assertTrue(apartment.getPrice()
-              .compareTo(maxPricePerSquareMeter.multiply(new BigDecimal(apartment.getArea()))) <= 0));
+          () -> assertTrue(apartment.getPrice().compareTo(minApartmentPrice) >= 0),
+          () -> assertTrue(apartment.getPrice().compareTo(maxApartmentPrice) <= 0));
     }
   }
 
   @Nested
-  class CustomMinAreaMinPrice {
-    RandomApartmentGenerator randomApartmentGenerator;
-    Random random;
+  class GeneratorCustomParamsTests {
+
+    private RandomApartmentGenerator generator;
+    private double minArea = 15.0;
+    private BigDecimal minPricePerSquareMeter = new BigDecimal(5000.0);
 
     @BeforeEach
     void setup() {
-      randomApartmentGenerator = new RandomApartmentGenerator();
-      random = new Random();
+      this.generator = new RandomApartmentGenerator(minArea, minPricePerSquareMeter);
     }
 
-    @Test
+    @RepeatedTest(10)
     void should_GenerateCorrectApartment_When_CustomMinAreaMinPrice() {
-      // Given
-      double minArea = random.nextInt(50) + 1;
+
+      // given
+      double minArea = this.minArea;
       double maxArea = minArea * MAX_MULTIPLIER;
-      BigDecimal minPricePerSquareMeter = new BigDecimal((random.nextInt(1000) + 1) * 10);
+      BigDecimal minPricePerSquareMeter = this.minPricePerSquareMeter;
       BigDecimal maxPricePerSquareMeter = minPricePerSquareMeter.multiply(new BigDecimal(MAX_MULTIPLIER));
 
-      // When
-      Apartment apartment = randomApartmentGenerator.generate();
+      // when
+      Apartment apartment = generator.generate();
 
-      // Then
+      // then
+      BigDecimal maxApartmentPrice = new BigDecimal(apartment.getArea()).multiply(maxPricePerSquareMeter);
+      BigDecimal minApartmentPrice = new BigDecimal(apartment.getArea()).multiply(minPricePerSquareMeter);
       assertAll(
           () -> assertTrue(apartment.getArea() >= minArea),
           () -> assertTrue(apartment.getArea() <= maxArea),
-          () -> assertTrue(apartment.getPrice()
-              .compareTo(minPricePerSquareMeter.multiply(new BigDecimal(apartment.getArea()))) >= 0),
-          () -> assertTrue(apartment.getPrice()
-              .compareTo(maxPricePerSquareMeter.multiply(new BigDecimal(apartment.getArea()))) <= 0));
+          () -> assertTrue(apartment.getPrice().compareTo(minApartmentPrice) >= 0),
+          () -> assertTrue(apartment.getPrice().compareTo(maxApartmentPrice) <= 0));
     }
   }
 }
